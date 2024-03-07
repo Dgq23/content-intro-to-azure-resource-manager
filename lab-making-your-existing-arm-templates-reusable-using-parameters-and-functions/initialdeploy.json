@@ -5,7 +5,7 @@
   "functions": [],
   "variables": {
     "location": "eastus" ,
-    "vmName": "myvm",
+    "vmName": "david",
     "publicIpName": "myip",
     "nicName": "myvmnic",
     "subnetName": "subnet",
@@ -16,16 +16,16 @@
     {
       "type": "Microsoft.Compute/virtualMachines",
       "apiVersion": "2021-03-01",
-      "name": "[variables('vmName')]",
+      "name": "[variables('david')]",
       "location": "[variables('location')]",
       "properties": {
         "hardwareProfile": {
           "vmSize": "Standard_A1_v2"
         },
         "osProfile": {
-          "computerName": "[variables('vmName')]",
-          "adminUsername": "acgadmin",
-          "adminPassword": "UpdateThis2!"
+          "computerName": "[variables('david')]",
+          "adminUsername": "davidadmin",
+          "adminPassword": "davidgonzalez"
         },
         "storageProfile": {
           "imageReference": {
