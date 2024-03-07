@@ -1,11 +1,61 @@
 {
   "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentTemplate.json#",
   "contentVersion": "1.0.0.0",
-  "parameters": {},
-  "functions": [],
+  "parameters": {
+    "vmUsername": {
+      "type": "string",
+      "defaultValue": "vmdavid",
+      "metadata": {
+        "description": "Nombre de usuario para la máquina virtual."
+      }
+    },
+    "vmPassword": {
+      "type": "secureString",
+      "defaultValue": "vmDgq",
+      "metadata": {
+        "description": "Contraseña para la máquina virtual."
+      }
+    },
+    "vmEnvironment": {
+      "type": "string",
+      "defaultValue": "dev",
+      "allowedValues": [
+        "dev",
+        "prod"
+      ],
+      "metadata": {
+        "description": "Entorno de la máquina virtual (dev o prod)."
+      }
+    }
+  },
+  "functions": [
+    {
+      "namespace": "variables",
+      "members": {
+        "getUniqueVMName": {
+          "parameters": [
+            {
+              "name": "resourceGroup",
+              "type": "string"
+            }
+          ],
+          "output": "[concat('vm-', uniqueString(resourceGroup().id))]"
+        },
+        "getVMSize": {
+          "parameters": [
+            {
+              "name": "env",
+              "type": "string"
+            }
+          ],
+          "output": "[if(equals(parameters('vmEnvironment'), 'dev'), 'Standard_DS1_v2', 'Standard_D2s_v3')]"
+        }
+      }
+    }
+  ],
   "variables": {
-    "location": "eastus" ,
-    "vmName": "myvm",
+    "location": "[resourceGroup().location]",
+    "vmName": "[variables('getUniqueVMName(resourceGroup().id))]",
     "publicIpName": "myip",
     "nicName": "myvmnic",
     "subnetName": "subnet",
@@ -20,12 +70,12 @@
       "location": "[variables('location')]",
       "properties": {
         "hardwareProfile": {
-          "vmSize": "Standard_A1_v2"
+          "vmSize": "[variables('getVMSize(parameters('vmEnvironment')))]"
         },
         "osProfile": {
           "computerName": "[variables('vmName')]",
-          "adminUsername": "acgadmin",
-          "adminPassword": "UpdateThis2!"
+          "adminUsername": "[parameters('vmUsername')]",
+          "adminPassword": "[parameters('vmPassword')]"
         },
         "storageProfile": {
           "imageReference": {
@@ -147,3 +197,4 @@
   ],
   "outputs": {}
 }
+
